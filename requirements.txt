@@ -1,1 +1,5 @@
 fastapi==0.117.1
+pytest==9.0.1
+pytest_steps==1.8.0
+SQLAlchemy==2.0.44
+python-dotenv==1.1.1
