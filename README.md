@@ -1,6 +1,6 @@
 # TODO API
 
-Uma API REST para gerenciamento de lista de tarefas (TODO list) desenvolvida com FastAPI, SQLAlchemy e PostgreSQL, seguindo os princípios da Clean Architecture.
+Uma API REST para gerenciamento de lista de tarefas (TODO list) desenvolvida com FastAPI, SQLAlchemy e PostgreSQL, seguindo os princípios da Clean Architecture para repertório.
 
 ## 🏗️ Arquitetura
 
@@ -10,26 +10,16 @@ O projeto segue os princípios da Clean Architecture, organizando o código em c
 
 ```
 src/
-├── domain/              # Entidades e regras de negócio
-│   └── todo.py         # Entidade Todo com lógica de domínio
-├── repos/              # Interfaces dos repositórios
-│   └── todo_repository_interface.py
+├── domain/              # Entidades e estruturas de dados
+├── repos/              # Repositórios para controle das entidades
 ├── infra/              # Infraestrutura e implementações
-│   └── database/
-│       ├── connection.py    # Configuração da base de dados
-│       ├── models.py        # Modelos SQLAlchemy
-│       └── todo_repository.py # Implementação do repositório
-├── app/                # Serviços da aplicação
-│   └── todo_service.py # Lógica de aplicação
-└── api/                # Interface HTTP
-    ├── schemas/        # Schemas Pydantic
-    └── routes.py       # Endpoints da API
+├── app/                # Services da aplicação
+└── api/                # Interface HTTP e Schemas
 ```
 
 ### Princípios Aplicados
 
 - **Separation of Concerns**: Cada camada tem uma responsabilidade específica
-- **Dependency Inversion**: Depende de abstrações, não de implementações
 - **Single Responsibility**: Cada classe tem uma única responsabilidade
 - **Domain-Driven Design**: A lógica de negócio está no domínio
 
@@ -51,7 +41,6 @@ src/
 - **PostgreSQL**: Base de dados relacional
 - **Pydantic**: Validação de dados e serialização
 - **Uvicorn**: Servidor ASGI de alta performance
-- **Alembic**: Migrações de base de dados
 - **Pytest**: Framework de testes
 
 ## 📦 Instalação e Configuração
@@ -66,8 +55,6 @@ cd base-api
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate     # Windows
 ```
 
 ### 3. Instalar dependências
@@ -75,18 +62,10 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-### 4. Configurar base de dados
+### 4. Executar projeto e dependências
 ```bash
-# Iniciar PostgreSQL com Docker
-docker-compose up -d
-
-# Copiar arquivo de configuração
-cp .env.example .env
-```
-
-### 6. Iniciar o servidor
-```bash
-uvicorn src.main:app
+# Iniciar docker com toda a aplicação
+docker-compose up
 ```
 
 A API estará disponível em: `http://localhost:8000`
@@ -111,104 +90,26 @@ A documentação interativa da API está disponível em:
 | `DELETE` | `/api/v1/todos/{id}` | Deletar TODO |
 | `GET` | `/api/v1/todos/stats` | Estatísticas |
 
-### Exemplos de Uso
-
-#### Criar TODO
-```bash
-curl -X POST "http://localhost:8000/api/v1/todos" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "title": "Estudar FastAPI",
-       "description": "Aprender sobre Clean Architecture",
-       "priority": "high"
-     }'
-```
-
-#### Listar TODOs com filtros
-```bash
-curl "http://localhost:8000/api/v1/todos?status=pending&priority=high&limit=10"
-```
-
-#### Atualizar status
-```bash
-curl -X PATCH "http://localhost:8000/api/v1/todos/{id}/status" \
-     -H "Content-Type: application/json" \
-     -d '{"status": "completed"}'
-```
-
 ## 🧪 Testes
 
 ### Executar todos os testes
 ```bash
-pytest
+pytest -xvv --disable-warnings
 ```
-
-### Executar testes com cobertura
-```bash
-pytest --cov=src tests/
-```
-
-### Executar testes específicos
-```bash
-pytest tests/unit/test_todo_domain.py
-```
-
-## 🗄️ Schema da Base de Dados
-
-```sql
-CREATE TABLE todos (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    status todo_status NOT NULL DEFAULT 'pending',
-    priority todo_priority NOT NULL DEFAULT 'medium',
-    due_date TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
-
-### Enums
-
-- **todo_status**: `pending`, `in_progress`, `completed`
-- **todo_priority**: `low`, `medium`, `high`
 
 ## 🐳 Docker
 
 ### Executar com Docker Compose
 ```bash
-# Iniciar apenas PostgreSQL
-docker-compose up -d postgres
-
-# Ou executar toda a aplicação (se configurado)
-docker-compose up -d
+docker-compose up
 ```
 
 ## 🔧 Configuração
 
-### Variáveis de Ambiente (.env)
+#### Python
 
-```env
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/mydatabase
-APP_NAME=TODO API
-APP_VERSION=1.0.0
-DEBUG=True
-HOST=0.0.0.0
-PORT=8000
-```
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+- Version 3.12.11
 
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 📞 Contato
-
-Para dúvidas ou sugestões, entre em contato através do GitHub Issues.
