@@ -51,18 +51,7 @@ git clone <repository-url>
 cd base-api
 ```
 
-### 2. Configurar ambiente virtual
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-```
-
-### 3. Instalar dependências
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Executar projeto e dependências
+### 2. Executar projeto e dependências
 ```bash
 # Iniciar docker com toda a aplicação
 docker-compose up
