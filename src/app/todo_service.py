@@ -2,14 +2,12 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
-from src.domain.todo import Todo, TodoStatus, TodoPriority
-from src.repos.todo_repository_interface import TodoRepositoryInterface
+from src.domain import Todo, TodoStatus, TodoPriority
+from src.repos import TodoRepository
 
 
 class TodoService:
-    """Serviço de aplicação para TODOs"""
-    
-    def __init__(self, todo_repository: TodoRepositoryInterface):
+    def __init__(self, todo_repository: TodoRepository):
         self.todo_repository = todo_repository
     
     async def create_todo(

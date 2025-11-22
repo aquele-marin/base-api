@@ -1,83 +1,38 @@
 from datetime import datetime
 from typing import Optional
-from uuid import UUID, uuid4
-from enum import Enum
+from uuid import uuid4
+
+from sqlalchemy import Column, String, Text, DateTime, Enum
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import declarative_base
+
+from src.domain.todo_status import TodoStatus
+from src.domain.todo_priority import TodoPriority
+
+Base = declarative_base()
 
 
-class TodoStatus(str, Enum):
-    """Status possíveis para um TODO"""
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-
-
-class TodoPriority(str, Enum):
-    """Prioridades possíveis para um TODO"""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-
-
-class Todo:
-    """Entidade Todo - representa um item da lista de tarefas"""
+class Todo(Base):
+    __tablename__ = "todos"
     
-    def __init__(
-        self,
-        title: str,
-        description: Optional[str] = None,
-        priority: TodoPriority = TodoPriority.MEDIUM,
-        status: TodoStatus = TodoStatus.PENDING,
-        due_date: Optional[datetime] = None,
-        id: Optional[UUID] = None,
-        created_at: Optional[datetime] = None,
-        updated_at: Optional[datetime] = None,
-    ):
-        self.id = id or uuid4()
-        self.title = title
-        self.description = description
-        self.priority = priority
-        self.status = status
-        self.due_date = due_date
-        self.created_at = created_at or datetime.utcnow()
-        self.updated_at = updated_at or datetime.utcnow()
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    title = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    status = Column(Enum(TodoStatus), nullable=False, default=TodoStatus.PENDING)
+    priority = Column(Enum(TodoPriority), nullable=False, default=TodoPriority.MEDIUM)
+    due_date = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    def mark_as_completed(self) -> None:
-        """Marca a tarefa como completa"""
-        self.status = TodoStatus.COMPLETED
-        self.updated_at = datetime.utcnow()
-    
-    def mark_as_in_progress(self) -> None:
-        """Marca a tarefa como em progresso"""
-        self.status = TodoStatus.IN_PROGRESS
-        self.updated_at = datetime.utcnow()
-    
-    def update_title(self, new_title: str) -> None:
-        """Atualiza o título da tarefa"""
-        self.title = new_title
-        self.updated_at = datetime.utcnow()
-    
-    def update_description(self, new_description: Optional[str]) -> None:
-        """Atualiza a descrição da tarefa"""
-        self.description = new_description
-        self.updated_at = datetime.utcnow()
-    
-    def update_priority(self, new_priority: TodoPriority) -> None:
-        """Atualiza a prioridade da tarefa"""
-        self.priority = new_priority
-        self.updated_at = datetime.utcnow()
-    
-    def update_due_date(self, new_due_date: Optional[datetime]) -> None:
-        """Atualiza a data de vencimento da tarefa"""
-        self.due_date = new_due_date
-        self.updated_at = datetime.utcnow()
-    
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, Todo):
-            return False
-        return self.id == other.id
-    
-    def __hash__(self) -> int:
-        return hash(self.id)
-    
-    def __repr__(self) -> str:
-        return f"Todo(id={self.id}, title='{self.title}', status={self.status})"
+    @classmethod
+    def from_domain(cls, todo) -> "Todo":
+        return cls(
+            id=todo.id,
+            title=todo.title,
+            description=todo.description,
+            status=todo.status,
+            priority=todo.priority,
+            due_date=todo.due_date,
+            created_at=todo.created_at,
+            updated_at=todo.updated_at
+        )

@@ -4,27 +4,25 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.schemas.todo_schemas import (
+from src.api.schemas import (
     TodoCreateRequest,
     TodoUpdateRequest,
     TodoStatusUpdateRequest,
     TodoResponse,
     TodoListResponse,
     TodoStatsResponse,
-    ErrorResponse
 )
-from src.app.todo_service import TodoService
-from src.domain.todo import TodoStatus, TodoPriority
-from src.infra.database.connection import get_db_session
-from src.infra.database.todo_repository import SqlAlchemyTodoRepository
+from src.app import TodoService
+from src.domain import TodoStatus, TodoPriority
+from src.infra import get_db_session
+from src.repos import TodoRepository
 
 
 todo_router = APIRouter()
 
 
 def get_todo_service(session: AsyncSession = Depends(get_db_session)) -> TodoService:
-    """Dependency para obter o serviço de TODOs"""
-    repository = SqlAlchemyTodoRepository(session)
+    repository = TodoRepository(session)
     return TodoService(repository)
 
 
@@ -179,7 +177,7 @@ async def delete_todo(
         if not deleted:
             raise HTTPException(status_code=404, detail="TODO not found")
     except HTTPException:
-        raise
+        raise HTTPException(status_code=400, detail="Bad request")
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

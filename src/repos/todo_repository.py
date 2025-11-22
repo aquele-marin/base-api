@@ -5,27 +5,22 @@ from sqlalchemy import select, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.todo import Todo, TodoStatus, TodoPriority
-from src.repos.todo_repository_interface import TodoRepositoryInterface
-from src.infra.database.models import TodoModel
+from src.domain import Todo
 
 
-class SqlAlchemyTodoRepository(TodoRepositoryInterface):
-    """Implementação SQLAlchemy do repositório de TODOs"""
-    
+class TodoRepository():
     def __init__(self, session: AsyncSession):
         self.session = session
     
     async def create(self, todo: Todo) -> Todo:
-        """Cria um novo TODO"""
-        todo_model = TodoModel.from_domain(todo)
+        todo_model = Todo.from_domain(todo)
         self.session.add(todo_model)
         await self.session.commit()
         await self.session.refresh(todo_model)
         return todo_model.to_domain()
     
     async def get_by_id(self, todo_id: UUID) -> Optional[Todo]:
-        """Busca um TODO pelo ID"""
-        stmt = select(TodoModel).where(TodoModel.id == todo_id)
+        stmt = select(Todo).where(Todo.id == todo_id)
         result = await self.session.execute(stmt)
         todo_model = result.scalar_one_or_none()
         
@@ -41,15 +36,15 @@ class SqlAlchemyTodoRepository(TodoRepositoryInterface):
         offset: int = 0
     ) -> List[Todo]:
         """Busca todos os TODOs com filtros opcionais"""
-        stmt = select(TodoModel)
+        stmt = select(Todo)
         
         if status:
-            stmt = stmt.where(TodoModel.status == status)
+            stmt = stmt.where(Todo.status == status)
         
         if priority:
-            stmt = stmt.where(TodoModel.priority == priority)
+            stmt = stmt.where(Todo.priority == priority)
         
-        stmt = stmt.order_by(TodoModel.created_at.desc()).offset(offset).limit(limit)
+        stmt = stmt.order_by(Todo.created_at.desc()).offset(offset).limit(limit)
         
         result = await self.session.execute(stmt)
         todo_models = result.scalars().all()
@@ -57,8 +52,7 @@ class SqlAlchemyTodoRepository(TodoRepositoryInterface):
         return [todo_model.to_domain() for todo_model in todo_models]
     
     async def update(self, todo: Todo) -> Todo:
-        """Atualiza um TODO existente"""
-        stmt = select(TodoModel).where(TodoModel.id == todo.id)
+        stmt = select(Todo).where(Todo.id == todo.id)
         result = await self.session.execute(stmt)
         todo_model = result.scalar_one_or_none()
         
@@ -71,8 +65,7 @@ class SqlAlchemyTodoRepository(TodoRepositoryInterface):
         return todo_model.to_domain()
     
     async def delete(self, todo_id: UUID) -> bool:
-        """Deleta um TODO pelo ID"""
-        stmt = delete(TodoModel).where(TodoModel.id == todo_id)
+        stmt = delete(Todo).where(Todo.id == todo_id)
         result = await self.session.execute(stmt)
         await self.session.commit()
         
@@ -83,14 +76,13 @@ class SqlAlchemyTodoRepository(TodoRepositoryInterface):
         status: Optional[TodoStatus] = None,
         priority: Optional[TodoPriority] = None
     ) -> int:
-        """Conta o número de TODOs com filtros opcionais"""
-        stmt = select(func.count(TodoModel.id))
+        stmt = select(func.count(Todo.id))
         
         if status:
-            stmt = stmt.where(TodoModel.status == status)
+            stmt = stmt.where(Todo.status == status)
         
         if priority:
-            stmt = stmt.where(TodoModel.priority == priority)
+            stmt = stmt.where(Todo.priority == priority)
         
         result = await self.session.execute(stmt)
         return result.scalar() or 0

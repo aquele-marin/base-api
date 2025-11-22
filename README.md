@@ -84,14 +84,9 @@ docker-compose up -d
 cp .env.example .env
 ```
 
-### 5. Executar migrações (opcional)
-```bash
-alembic upgrade head
-```
-
 ### 6. Iniciar o servidor
 ```bash
-python main.py
+uvicorn src.main:app
 ```
 
 A API estará disponível em: `http://localhost:8000`
