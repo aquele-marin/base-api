@@ -2,14 +2,11 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Text, DateTime, Enum
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
-from src.domain.todo_status import TodoStatus
-from src.domain.todo_priority import TodoPriority
-
-Base = declarative_base()
+from src.infra import Base
 
 
 class Todo(Base):
@@ -18,21 +15,22 @@ class Todo(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(TodoStatus, nullable=False, default=TodoStatus.PENDING)
-    priority = Column(TodoPriority, nullable=False, default=TodoPriority.MEDIUM)
+    status_id = Column(Integer, ForeignKey("todo_statuses.id"), nullable=False)
+    priority_id = Column(Integer, ForeignKey("todo_priorities.id"), nullable=False)
     due_date = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    @classmethod
-    def from_domain(cls, todo) -> "Todo":
-        return cls(
-            id=todo.id,
-            title=todo.title,
-            description=todo.description,
-            status=todo.status,
-            priority=todo.priority,
-            due_date=todo.due_date,
-            created_at=todo.created_at,
-            updated_at=todo.updated_at
-        )
+    # Relationships
+    status = relationship("TodoStatus", back_populates="todos", lazy="joined")
+    priority = relationship("TodoPriority", back_populates="todos", lazy="joined")
+
+    def __repr__(self):
+        return f"<Todo(id={self.id}, title='{self.title}')>"
+    
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.title == other
+        if isinstance(other, Todo):
+            return self.id == other.id
+        return False
