@@ -36,14 +36,11 @@ class TodoResponse(BaseModel):
     id: UUID = Field(..., description="ID único do TODO")
     title: str = Field(..., description="Título do TODO")
     description: Optional[str] = Field(None, description="Descrição do TODO")
-    status: str = Field(..., description="Status atual do TODO")
-    priority: str = Field(..., description="Prioridade do TODO")
+    status: Optional[str] = Field(..., description="Status atual do TODO")
+    priority: Optional[str] = Field(..., description="Prioridade do TODO")
     due_date: Optional[datetime] = Field(None, description="Data de vencimento do TODO")
     created_at: datetime = Field(..., description="Data de criação do TODO")
     updated_at: datetime = Field(..., description="Data da última atualização do TODO")
-    
-    class Config:
-        from_attributes = True
     
     @classmethod
     def from_domain(cls, todo) -> "TodoResponse":
@@ -52,8 +49,8 @@ class TodoResponse(BaseModel):
             id=todo.id,
             title=todo.title,
             description=todo.description,
-            status=todo.status,
-            priority=todo.priority,
+            status=todo.status.value if todo.status else None,
+            priority=todo.priority.value if todo.priority else None,
             due_date=todo.due_date,
             created_at=todo.created_at,
             updated_at=todo.updated_at
