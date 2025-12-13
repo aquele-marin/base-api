@@ -29,14 +29,14 @@ class TodoResource:
             priority=priority_value,
             due_date=request.due_date
         )
-        return TodoResponse.from_domain(todo)
+        return TodoResponse.from_domain(todo=todo)
     
     async def get_by_id(self, todo_id: UUID) -> Optional[TodoResponse]:
         """Busca um TODO pelo ID"""
         todo = await self.todo_service.get_todo_by_id(todo_id)
         if not todo:
             return None
-        return TodoResponse.from_domain(todo)
+        return TodoResponse.from_domain(todo=todo)
     
     async def list(
         self,
@@ -57,7 +57,7 @@ class TodoResource:
         )
         
         return TodoListResponse(
-            todos=[TodoResponse.from_domain(todo) for todo in todos],
+            todos=[TodoResponse.from_domain(todo=todo) for todo in todos],
             total=len(todos),
             limit=limit,
             offset=offset
@@ -76,7 +76,7 @@ class TodoResource:
             priority=priority_value,
             due_date=request.due_date
         )
-        return TodoResponse.from_domain(todo)
+        return TodoResponse.from_domain(todo=todo)
     
     async def update_status(self, todo_id: UUID, request: TodoStatusUpdateRequest) -> TodoResponse:
         """Atualiza apenas o status de um TODO"""
@@ -86,7 +86,7 @@ class TodoResource:
             todo_id=todo_id,
             status=status_value
         )
-        return TodoResponse.from_domain(todo)
+        return TodoResponse.from_domain(todo=todo)
     
     async def delete(self, todo_id: UUID) -> bool:
         """Deleta um TODO"""
