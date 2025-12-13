@@ -88,7 +88,7 @@ class TodoService:
             todo.due_date = due_date
         
         await self.session.commit()
-        return todo.to_dict()
+        return todo
     
     async def delete_todo(self, todo_id: UUID) -> bool:
         todo = await self.todo_repository.get_by_id(todo_id)
