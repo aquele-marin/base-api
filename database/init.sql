@@ -1,20 +1,40 @@
 -- Enable UUID generation (use one of these extensions; uuid-ossp is common)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create enum types
-CREATE TYPE todo_status AS ENUM ('pending', 'in_progress', 'completed');
-CREATE TYPE todo_priority AS ENUM ('low', 'medium', 'high');
+-- TodoStatus Table
+CREATE TABLE IF NOT EXISTS todo_statuses (
+	id SERIAL PRIMARY KEY,
+	value VARCHAR(50) NOT NULL
+);
+
+-- Insert TodoStatus values
+INSERT INTO todo_statuses (value) VALUES ('pending') ON CONFLICT DO NOTHING;
+INSERT INTO todo_statuses (value) VALUES ('in_progress') ON CONFLICT DO NOTHING;
+INSERT INTO todo_statuses (value) VALUES ('completed') ON CONFLICT DO NOTHING;
+
+-- TodoPriority Table
+CREATE table if not exists todo_priorities (
+	id SERIAL PRIMARY KEY,
+	value VARCHAR(50) not NULL
+);
+
+-- Insert TodoPriority values
+INSERT INTO todo_priorities (value) VALUES ('low') ON CONFLICT DO NOTHING;
+INSERT INTO todo_priorities (value) VALUES ('medium') ON CONFLICT DO NOTHING;
+INSERT INTO todo_priorities (value) VALUES ('high') ON CONFLICT DO NOTHING;
 
 -- TODO Table
 CREATE TABLE IF NOT EXISTS todos (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id SERIAL PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     description TEXT,
-    status todo_status NOT NULL DEFAULT 'pending',
-    priority todo_priority NOT NULL DEFAULT 'medium',
-    due_date TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    status INT NOT NULL,
+    priority INT NOT NULL,
+    due_date DATETIME,
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    updated_at DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (status) REFERENCES todo_statuses(id),
+    FOREIGN KEY (priority) REFERENCES todo_priorities(id)f
 );
 
 -- Index for better query performance

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from src.domain.todo import TodoStatus, TodoPriority
+from src.constants import TodoStatusEnum, TodoPriorityEnum
 
 
 # Schemas de entrada (Request)
@@ -12,7 +12,7 @@ class TodoCreateRequest(BaseModel):
     """Schema para criação de TODO"""
     title: str = Field(..., min_length=1, max_length=200, description="Título do TODO")
     description: Optional[str] = Field(None, max_length=1000, description="Descrição detalhada do TODO")
-    priority: TodoPriority = Field(TodoPriority.MEDIUM, description="Prioridade do TODO")
+    priority: TodoPriorityEnum = Field(TodoPriorityEnum.MEDIUM, description="Prioridade do TODO")
     due_date: Optional[datetime] = Field(None, description="Data de vencimento do TODO")
 
 
@@ -20,14 +20,14 @@ class TodoUpdateRequest(BaseModel):
     """Schema para atualização de TODO"""
     title: Optional[str] = Field(None, min_length=1, max_length=200, description="Novo título do TODO")
     description: Optional[str] = Field(None, max_length=1000, description="Nova descrição do TODO")
-    priority: Optional[TodoPriority] = Field(None, description="Nova prioridade do TODO")
-    status: Optional[TodoStatus] = Field(None, description="Novo status do TODO")
+    priority: Optional[TodoPriorityEnum] = Field(None, description="Nova prioridade do TODO")
+    status: Optional[TodoStatusEnum] = Field(None, description="Novo status do TODO")
     due_date: Optional[datetime] = Field(None, description="Nova data de vencimento do TODO")
 
 
 class TodoStatusUpdateRequest(BaseModel):
     """Schema para atualização apenas do status"""
-    status: TodoStatus = Field(..., description="Novo status do TODO")
+    status: TodoStatusEnum = Field(..., description="Novo status do TODO")
 
 
 # Schemas de saída (Response)
@@ -36,8 +36,8 @@ class TodoResponse(BaseModel):
     id: UUID = Field(..., description="ID único do TODO")
     title: str = Field(..., description="Título do TODO")
     description: Optional[str] = Field(None, description="Descrição do TODO")
-    status: TodoStatus = Field(..., description="Status atual do TODO")
-    priority: TodoPriority = Field(..., description="Prioridade do TODO")
+    status: str = Field(..., description="Status atual do TODO")
+    priority: str = Field(..., description="Prioridade do TODO")
     due_date: Optional[datetime] = Field(None, description="Data de vencimento do TODO")
     created_at: datetime = Field(..., description="Data de criação do TODO")
     updated_at: datetime = Field(..., description="Data da última atualização do TODO")

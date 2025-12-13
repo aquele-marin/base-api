@@ -51,6 +51,33 @@ class TodoService:
             offset=offset
         )
     
+    async def update_todo(
+        self,
+        todo_id: UUID,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        status: Optional[str] = None,
+        priority: Optional[str] = None,
+        due_date: Optional[datetime] = None
+    ) -> Todo:
+        """Atualiza um TODO existente"""
+        todo = await self.todo_repository.get_by_id(todo_id)
+        if not todo:
+            raise ValueError(f"TODO with id {todo_id} not found")
+        
+        if title:
+            todo.title = title
+        if description:
+            todo.description = description
+        if status:
+            todo.status = status
+        if priority:
+            todo.priority = priority
+        if due_date:
+            todo.due_date = due_date
+        
+        return todo
+    
     async def delete_todo(self, todo_id: UUID) -> bool:
         todo = await self.todo_repository.get_by_id(todo_id)
         if not todo:
