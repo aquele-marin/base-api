@@ -54,7 +54,6 @@ class TodoRepository():
         )
 
         self.session.add(todo)
-        await self.session.commit()
         return todo
     
     async def get_by_id(self, todo_id: UUID) -> Optional[Todo]:
@@ -92,7 +91,6 @@ class TodoRepository():
     async def delete(self, todo_id: UUID) -> bool:
         stmt = delete(Todo).where(Todo.id == todo_id)
         result = await self.session.execute(stmt)
-        await self.session.commit()
         
         return result.rowcount > 0
     
