@@ -4,11 +4,10 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.resources import TodoResource
+from src.resources import TodoResource
 from src.api.schemas import (
     TodoCreateRequest,
     TodoUpdateRequest,
-    TodoStatusUpdateRequest,
     TodoResponse,
     TodoListResponse,
     TodoStatsResponse,
@@ -25,7 +24,7 @@ todo_router = APIRouter()
 def get_todo_service(session: AsyncSession = Depends(get_db_session)) -> TodoService:
     """Dependency para obter instância do TodoService"""
     repository = TodoRepository(session)
-    return TodoService(repository)
+    return TodoService(repository, session)
 
 
 def get_todo_resource(todo_service: TodoService = Depends(get_todo_service)) -> TodoResource:
