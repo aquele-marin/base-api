@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 
 from src.infra import Base
 
@@ -34,3 +33,21 @@ class Todo(Base):
         if isinstance(other, Todo):
             return self.id == other.id
         return False
+    
+    def to_dict(self) -> dict:
+        """
+        Convert Todo instance to dictionary.
+
+        Returns:
+            dict: Dictionary with id, title, description, status, priority, due_date, created_at and updated_at.
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status.to_dict(),
+            "priority": self.priority.to_dict(),
+            "due_date": self.due_date,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }

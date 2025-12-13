@@ -9,7 +9,7 @@ class TodoPriority(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String(50), unique=True, nullable=False, index=True)
     
-    todos = relationship("Todo", back_populates="priority_ref")
+    todos = relationship("Todo", back_populates="priority", lazy="selectin")
     
     def __repr__(self):
         return f"<TodoPriority(id={self.id}, value='{self.value}')>"
@@ -21,3 +21,15 @@ class TodoPriority(Base):
         if isinstance(other, TodoPriority):
             return self.value == other.value
         return False
+        
+    def to_dict(self) -> dict:
+        """
+        Convert TodoPriority instance to dictionary.
+
+        Returns:
+            dict: Dictionary with id and value.
+        """
+        return {
+            "id": self.id,
+            "value": self.value
+        }
