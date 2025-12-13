@@ -25,20 +25,20 @@ INSERT INTO todo_priorities (value) VALUES ('high') ON CONFLICT DO NOTHING;
 
 -- TODO Table
 CREATE TABLE IF NOT EXISTS todos (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(200) NOT NULL,
     description TEXT,
-    status INT NOT NULL,
-    priority INT NOT NULL,
-    due_date DATETIME,
-    created_at DATETIME NOT NULL DEFAULT NOW(),
-    updated_at DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (status) REFERENCES todo_statuses(id),
-    FOREIGN KEY (priority) REFERENCES todo_priorities(id)f
+    status_id INTEGER,
+    priority_id INTEGER,
+    due_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (status_id) REFERENCES todo_statuses(id),
+    FOREIGN KEY (priority_id) REFERENCES todo_priorities(id)
 );
 
 -- Index for better query performance
-CREATE INDEX IF NOT EXISTS idx_todos_status ON todos(status);
-CREATE INDEX IF NOT EXISTS idx_todos_priority ON todos(priority);
+CREATE INDEX IF NOT EXISTS idx_todos_status_id ON todos(status_id);
+CREATE INDEX IF NOT EXISTS idx_todos_priority_id ON todos(priority_id);
 CREATE INDEX IF NOT EXISTS idx_todos_due_date ON todos(due_date);
 CREATE INDEX IF NOT EXISTS idx_todos_created_at ON todos(created_at);
