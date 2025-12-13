@@ -73,6 +73,20 @@ async def get_todos(
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@todo_router.get(
+    "/todos/stats",
+    response_model=TodoStatsResponse,
+    summary="Estatísticas dos TODOs",
+    description="Retorna estatísticas gerais dos TODOs"
+)
+async def get_todo_stats(
+    resource: TodoResource = Depends(get_todo_resource)
+):
+    """Retorna estatísticas dos TODOs"""
+    try:
+        return await resource.get_stats()
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @todo_router.get(
     "/todos/{todo_id}",
@@ -130,21 +144,5 @@ async def delete_todo(
             raise HTTPException(status_code=404, detail="TODO not found")
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception:
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-
-@todo_router.get(
-    "/todos/stats",
-    response_model=TodoStatsResponse,
-    summary="Estatísticas dos TODOs",
-    description="Retorna estatísticas gerais dos TODOs"
-)
-async def get_todo_stats(
-    resource: TodoResource = Depends(get_todo_resource)
-):
-    """Retorna estatísticas dos TODOs"""
-    try:
-        return await resource.get_stats()
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error")
