@@ -45,8 +45,8 @@ class Todo(Base):
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            "status": self.status.to_dict(),
-            "priority": self.priority.to_dict(),
+            "status": self.status.value,
+            "priority": self.priority.value,
             "due_date": self.due_date,
             "created_at": self.created_at,
             "updated_at": self.updated_at
