@@ -34,8 +34,8 @@ def get_todo_resource(todo_service: TodoService = Depends(get_todo_service)) -> 
 
 @todo_router.post(
     "/todos",
-    response_model=TodoResponse,
     status_code=201,
+    response_model=TodoResponse,
     summary="Criar novo TODO",
     description="Cria um novo item na lista de TODOs"
 )
