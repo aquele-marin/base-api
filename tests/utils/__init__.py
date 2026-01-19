@@ -9,4 +9,3 @@ __all__ = [
     "assert_todo_fields_present",
     "assert_todo_content",
 ]
-

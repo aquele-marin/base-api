@@ -14,7 +14,9 @@ def assert_todo_fields_present(response_data: Dict[str, Any]) -> None:
         assert field in response_data, f"Missing required field: {field}"
 
 
-def assert_todo_content(response_data: Dict[str, Any], expected_data: Dict[str, Any]) -> None:
+def assert_todo_content(
+    response_data: Dict[str, Any], expected_data: Dict[str, Any]
+) -> None:
     """Assert todo response matches expected data."""
     if "title" in expected_data:
         assert response_data["title"] == expected_data["title"]
@@ -24,4 +26,3 @@ def assert_todo_content(response_data: Dict[str, Any], expected_data: Dict[str, 
         assert response_data["priority"] == expected_data["priority"]
     if "status" in expected_data:
         assert response_data["status"] == expected_data["status"]
-

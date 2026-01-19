@@ -11,4 +11,3 @@ __all__ = [
     "generate_future_due_date",
     "generate_past_due_date",
 ]
-

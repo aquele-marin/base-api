@@ -12,7 +12,7 @@ def assert_todo_response_structure(response_data: Dict[str, Any]) -> None:
         AssertionError: If response structure is invalid.
     """
     required_fields = ["id", "title", "status", "priority", "created_at", "updated_at"]
-    
+
     for field in required_fields:
         assert field in response_data, f"Missing required field: {field}"
 
@@ -56,9 +56,8 @@ def assert_todo_stats_response_structure(response_data: Dict[str, Any]) -> None:
         AssertionError: If response structure is invalid.
     """
     required_fields = ["total", "pending", "in_progress", "completed"]
-    
+
     for field in required_fields:
         assert field in response_data, f"Missing required field: {field}"
         assert isinstance(response_data[field], int), f"{field} should be an integer"
         assert response_data[field] >= 0, f"{field} should be non-negative"
-

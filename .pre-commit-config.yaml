@@ -17,4 +17,3 @@ repos:
       - id: black
         language_version: python3.12
         exclude: ^.*/__init__\.py$
-
