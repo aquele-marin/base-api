@@ -6,7 +6,7 @@ from src.infra import init_db
 app = FastAPI(
     title="TODO API",
     description="API de TO-DO list seguindo Clean Architecture",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 app.add_middleware(
@@ -19,19 +19,18 @@ app.add_middleware(
 
 app.include_router(todo_router, prefix="/api/v1", tags=["todos"])
 
+
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+
 
 @app.get("/", tags=["health"])
 async def health_check():
     return {"status": "healthy", "message": "TODO API is running"}
 
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app", 
-        host="0.0.0.0", 
-        port=8000, 
-        reload=True
-    )
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
