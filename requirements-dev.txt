@@ -1,5 +1,7 @@
 pytest==9.0.1
-pytest_steps==1.8.0
+pytest-steps==1.8.0
+pytest-asyncio==0.24.0
+httpx==0.27.2
 fastapi==0.117.1
 SQLAlchemy==2.0.44
 python-dotenv==1.1.1
